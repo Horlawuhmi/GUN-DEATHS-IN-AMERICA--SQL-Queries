@@ -1,0 +1,38 @@
+CREATE schema Guncrime;
+USE Guncrime;
+
+--- Check for number of rows---
+SELECT count(*)
+FROM gundeaths;
+
+--- Check for number of columns--
+SELECT COUNT(column_name)
+FROM INFORMATION_SCHEMA.COLUMNs
+WHERE TABLE_SCHEMA = 'guncrime'
+AND TABLE_NAME = 'gundeaths';
+
+---- Check for duplicates--
+SELECT count(*)
+FROM gundeaths;
+
+--- Add month column and name----
+
+ALTER TABLE gundeaths
+ADD COLUMN monthname VARCHAR(20); 
+
+UPDATE gundeaths
+SET monthname = 
+  CASE 
+    WHEN month = 1 THEN 'January'
+    WHEN month = 2 THEN 'February'
+    WHEN month = 3 THEN 'March'
+    WHEN month = 4 THEN 'April'
+    WHEN month = 5 THEN 'May'
+    WHEN month = 6 THEN 'June'
+    WHEN month = 7 THEN 'July'
+    WHEN month = 8 THEN 'August'
+    WHEN month = 9 THEN 'September'
+    WHEN month = 10 THEN 'October'
+    WHEN month = 11 THEN 'November'
+    WHEN month = 12 THEN 'December'
+  END;
