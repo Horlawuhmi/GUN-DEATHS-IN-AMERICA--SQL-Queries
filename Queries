@@ -36,3 +36,91 @@ SET monthname =
     WHEN month = 11 THEN 'November'
     WHEN month = 12 THEN 'December'
   END;
+
+--- 1. Between the years presented, which year has the highest number of deaths?--
+	SELECT year,
+       COUNT(intent) AS intent_count
+FROM gundeaths
+GROUP BY year
+ORDER BY COUNT(intent) DESC;
+SELECT *
+FROM gundeaths
+LIMIT 10;
+
+--- 2. What is the rate of gun deaths among genders?---   
+SELECT sex,
+    COUNT(*) AS gender_count,
+    CONCAT(ROUND((COUNT(*) / (SELECT COUNT(*) FROM gundeaths) * 100),0),'%') AS percentage
+FROM gundeaths
+WHERE sex IN ('M', 'F')
+GROUP BY sex;
+
+--- 3. Does the educational level have an impact on the intent?--
+SELECT education, 
+		intent, 
+        COUNT(*) AS count
+	FROM gundeaths
+	WHERE education IS NOT NULL 
+    AND intent IS NOT NULL
+	GROUP BY education, intent
+	ORDER BY count DESC;
+
+---- Update the empty cell with unknown in education and intent column ---
+UPDATE gundeaths
+SET education = CASE
+    WHEN education = '' THEN 'Unknown'
+    ELSE education
+END;
+UPDATE gundeaths
+SET intent = CASE
+    WHEN intent = '' THEN 'Unknown'
+    ELSE intent
+END;
+select *
+from gundeaths
+limit 10;
+
+--- 4. What is the highest intention among deaths?---
+	SELECT intent,
+    COUNT(intent) AS number_of_deaths
+    FROM gundeaths
+    GROUP BY intent
+    ORDER BY COUNT(intent) DESC;
+
+--- 5. Which age group has the most deaths, and what is the intent?---
+SELECT 
+  CASE
+    WHEN age BETWEEN 0 AND 12 THEN '0-12'
+    WHEN age BETWEEN 13 AND 19 THEN '13-19'
+    WHEN age BETWEEN 20 AND 29 THEN '20-29'
+    WHEN age BETWEEN 30 AND 39 THEN '30-39'
+    WHEN age BETWEEN 40 AND 49 THEN '40-49'
+    WHEN age BETWEEN 50 AND 59 THEN '50-59'
+    ELSE '60+'
+  END AS age_group,
+  intent,
+  COUNT(*) AS death_count
+FROM gundeaths
+WHERE age IS NOT NULL
+GROUP BY age_group, intent
+ORDER BY death_count DESC;
+
+--- 6. What is the highest place of occurence?---
+	SELECT place, 
+			COUNT(intent) AS number_of_deaths
+            FROM gundeaths
+            GROUP BY place
+            ORDER BY COUNT(intent) DESC;
+
+----- update empty cells with unknown---
+UPDATE gundeaths
+SET place = CASE
+    WHEN place = '' THEN 'Unknown'
+    ELSE place
+END;
+
+
+--- 7. How many police deaths were involved?--
+		SELECT COUNT(*) AS total_deaths,
+       SUM(CASE WHEN police >= 1 THEN 1 ELSE 0 END) AS police_deaths
+FROM gundeaths;
