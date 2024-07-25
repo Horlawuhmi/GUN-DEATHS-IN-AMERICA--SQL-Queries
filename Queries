@@ -3,7 +3,7 @@ USE Guncrime;
 
 --- Check for number of rows---
 SELECT count(*)
-FROM gundeaths;
+FROM gundeaths; 
 
 --- Check for number of columns--
 SELECT COUNT(column_name)
